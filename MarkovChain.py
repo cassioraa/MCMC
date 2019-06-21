@@ -44,7 +44,7 @@ def gerar_rw(p,q,r, N):
 p = 0.55
 q = 0.45
 r = 0
-N = 500
+N = 10000
 y = gerar_rw(p,q,r,N)
 
 p1 = 0.5
