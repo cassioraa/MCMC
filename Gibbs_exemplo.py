@@ -218,3 +218,48 @@ ax[1].set_xlabel("$\lambda$")
 ax[1].set_title("$50$ iterações")
 plt.savefig("text/fig5.pdf")
 plt.show()
+
+
+#=============================
+# Tamanho da amostra efetivo
+#=============================
+
+from statsmodels.tsa import stattools 
+
+# Calcula o tamanho efetivo
+neff = np.zeros(3)
+for i in range(3):
+    fac = stattools.acf(draws[i,:], nlags=20)
+    neff[i] = Niter/(1+2 * sum(fac[1:]))
+
+print("neff \n", neff)
+
+#=========================================
+# Gráfico da autocorrelação
+#=========================================
+from statsmodels.tsa import stattools 
+from matplotlib.ticker import MaxNLocator
+
+index = list(range(0,len(fac)))
+
+fig, ax = plt.subplots(nrows=3, ncols=1, figsize=(10,8))
+
+for i in range(3):
+    Y = draws[i,:]
+    fac  = stattools.acf(Y, nlags=20)
+    index = 1+np.array(range(len(fac)))
+    
+    ax[i].bar(np.array(index), fac, width=0.5, color='grey', label=labels[i])
+    ax[i].axhline(0, color='red', lw=0.5)
+    ax[i].axhline((1.96/np.sqrt(len(Y))), color='blue', linestyle = "--", lw=0.5)
+    ax[i].axhline(-(1.96/np.sqrt(len(Y))), color='blue', linestyle = "--", lw=0.5)
+    ax[i].legend(loc="upper right")
+    #ax[i].set_xlim(0.5,20)
+    
+    ax[i].tick_params(direction="in")
+    ax[i].xaxis.set_major_locator(MaxNLocator(integer=True))
+    ax[i].set_ylabel("$\\rho_j$")
+ax[2].set_xlabel("Defasagens, $j$")
+plt.savefig("text/fig6.pdf")
+    
+plt.show()
